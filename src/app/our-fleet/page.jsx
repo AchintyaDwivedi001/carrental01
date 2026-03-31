@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import Banners from "@/components/Banners";
 import Insights from "@/components/Insights";
 import React from "react";
