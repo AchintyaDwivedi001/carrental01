@@ -10,14 +10,14 @@ export default async function connect() {
 
   try {
     // Let's print the URL to the terminal to prove it exists!
-    console.log("Checking ENV variable:", process.env.DATABASE_URL);
+    console.log("Checking ENV variable:",process.env.MONGODB_URI);
 
     // Make sure this exactly matches what is in your .env file
-    if (!process.env.DATABASE_URL) {
-      throw new Error("DATABASE_URL is missing from .env file");
+    if (!process.env.MONGODB_URI) {
+      throw new Error("MONGODB_URI is missing from .env file");
     }
 
-    const db = await mongoose.connect(process.env.DATABASE_URL);
+    const db = await mongoose.connect(process.env.MONGODB_URI);
 
     isConnected = db.connections[0].readyState === 1;
     console.log("MongoDB connected successfully");
