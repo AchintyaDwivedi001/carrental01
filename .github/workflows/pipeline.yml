@@ -1,32 +1,37 @@
-name: Startup Infrastructure CI
+name: Startup Infrastructure CI/CD
 
 on:
   push:
-    branches: [ "main", "master" ] # Triggers when you push to main/master
+    branches: [ "main", "master" ]
 
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest # GitHub gives us a fresh Linux server
+  build-and-deploy:
+    runs-on: ubuntu-latest
 
     steps:
-    # 1. GitHub downloads your code onto their server
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    # 2. We tell the server to install Node.js
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20' # Matches Next.js requirements
+        node-version: '20'
 
-    # 3. Install all your packages
     - name: Install Dependencies
       run: npm ci
 
-    # 4. Next.js automatically checks for errors and builds the app
     - name: Run Next.js Build & Lint
       run: npm run build
 
-    # 5. Finally, we test if your Dockerfile is still valid!
-    - name: Test Docker Build
-      run: docker build -t car-rental-cloud .
+    # --- THE NEW CD PIPELINE ---
+    - name: Build Docker Image
+      # We tag the image with your specific Docker username
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/car-rental-cloud:latest .
+
+    - name: Log in to Docker Hub
+      # Securely logs in using the hidden secrets you just created
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+    - name: Push to Registry
+      # Uploads the finished container to the internet!
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/car-rental-cloud:latest
