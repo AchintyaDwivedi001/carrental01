@@ -10,9 +10,13 @@ export const PaymentMethod = async (body) => {
     // 1. Connect to DB
     await connect();
     
+    // 🌟 THE X-RAY: Let's see exactly what the server received!
+    console.log("📦 Received on Server:", body);
+    
     // --- THE FIX ---
-    // MongoDB requires a comment. If the user left it blank, this provides a default value.
+    // MongoDB strict validation safety nets
     body.comment = body.comment || "No comment provided"; 
+    body.subtitle = body.subtitle || "Standard Trim"; // Prevents subtitle crashes
 
     // 2. Create order in MongoDB
     const newOrder = await Order.create(body);

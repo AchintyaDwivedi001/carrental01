@@ -1,0 +1,32 @@
+name: Startup Infrastructure CI
+
+on:
+  push:
+    branches: [ "main", "master" ] # Triggers when you push to main/master
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest # GitHub gives us a fresh Linux server
+
+    steps:
+    # 1. GitHub downloads your code onto their server
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # 2. We tell the server to install Node.js
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20' # Matches Next.js requirements
+
+    # 3. Install all your packages
+    - name: Install Dependencies
+      run: npm ci
+
+    # 4. Next.js automatically checks for errors and builds the app
+    - name: Run Next.js Build & Lint
+      run: npm run build
+
+    # 5. Finally, we test if your Dockerfile is still valid!
+    - name: Test Docker Build
+      run: docker build -t car-rental-cloud .
