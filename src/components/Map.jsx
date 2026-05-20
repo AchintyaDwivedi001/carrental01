@@ -14,20 +14,33 @@ L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x.src,
   shadowUrl: markerShadow.src,
 });
+
 const Map = ({ getSource, getDestination }) => {
+  // 🌟 THE TRANSLATION LAYER: Safely convert 'latitude' strings to strict Leaflet number arrays
+  const sourceCoord = getSource?.latitude && getSource?.longitude 
+    ? [parseFloat(getSource.latitude), parseFloat(getSource.longitude)] 
+    : null;
+
+  const destCoord = getDestination?.latitude && getDestination?.longitude 
+    ? [parseFloat(getDestination.latitude), parseFloat(getDestination.longitude)] 
+    : null;
+
+  // Center on India by default if no source is selected yet
+  const defaultCenter = [20.5937, 78.9629]; 
+
   return (
     <MapContainer
-      center={getSource || [51.505, -0.09]}
-      zoom={4}
+      center={sourceCoord || defaultCenter}
+      zoom={sourceCoord ? 10 : 4} // Zoom in tight if we have a city!
       scrollWheelZoom={false}
-      className="h-full rounded-lg"
+      className="h-full rounded-lg min-h-[400px] z-0 relative"
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {getSource && <Marker position={getSource} />}
-      {getDestination && <Marker position={getDestination} />}
+      {sourceCoord && <Marker position={sourceCoord} />}
+      {destCoord && <Marker position={destCoord} />}
     </MapContainer>
   );
 };

@@ -43,8 +43,14 @@ const StepFour = ({ form }) => {
   const Submit = async () => {
     setIsSubmitting(true); // Disable button while loading
     try {
-      // 1. Call the Server Action
-      const url = await PaymentMethod({ ...form.getValues(), price });
+      // 🌟 THE FIX: The Next.js Sanitizer (Strips React Proxies & Dates)
+      const rawData = { ...form.getValues(), price };
+      const sanitizedPayload = JSON.parse(JSON.stringify(rawData));
+      
+      console.log("🚀 Sending to Server:", sanitizedPayload);
+
+      // 1. Call the Server Action with the cleaned payload
+      const url = await PaymentMethod(sanitizedPayload);
       
       // 2. Safe Routing: Only push if a valid URL string is returned
       if (url && typeof url === 'string') {

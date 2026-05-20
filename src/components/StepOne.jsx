@@ -120,12 +120,24 @@ const StepOne = ({ form }) => {
           />
         </form>
       </Form>
-      <div className="flex justify-start flex-col">
-        <Map 
-          key={activeSourceCity?.name || "empty-map"} 
-          getSource={activeSourceCity} 
-          getDestination={activeDestCity} 
-        />
+      
+      {/* 🛑 REACT CONDITIONAL GUARD APPLIED HERE 🛑 */}
+      <div className="flex justify-start flex-col w-full h-full min-h-[400px]">
+      {activeSourceCity && activeDestCity ? (
+          <Map 
+            key={activeSourceCity?.name || "empty-map"} 
+            getSource={activeSourceCity} 
+            getDestination={activeDestCity} 
+          />
+        ) : (
+          <div className="h-full w-full min-h-[400px] flex flex-col items-center justify-center bg-slate-50 border border-slate-200 rounded-xl shadow-inner">
+            <svg className="w-12 h-12 text-slate-300 mb-4 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <p className="text-slate-500 font-medium">Select a source city to generate the route map</p>
+          </div>
+        )}
       </div>
     </div>
   );
